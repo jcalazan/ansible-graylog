@@ -1,0 +1,56 @@
+---
+
+- name: Add the OpenJDK PPA
+  apt_repository:
+    repo: 'ppa:openjdk-r/ppa'
+    state: present
+
+- name: Install packages and dependencies
+  apt: name={{ item }} update_cache={{ update_apt_cache }} state=installed
+  with_items:
+    - apt-transport-https
+    - openjdk-8-jre-headless
+    - uuid-runtime
+    - pwgen
+
+
+- name: Install MongoDB
+  apt: name=mongodb-server state=installed
+
+
+- name: Add the ElasticSearch public GPG key to the apt repo
+  apt_key: url=https://packages.elastic.co/GPG-KEY-elasticsearch
+           state=present
+
+- name: Add ElasticSearch to the trusted sources list
+  apt_repository:
+    repo: deb https://packages.elastic.co/elasticsearch/2.x/debian stable main
+    update_cache: "{{ update_apt_cache }}"
+    state: present
+
+- name: Install ElasticSearch
+  apt: name=elasticsearch state=installed
+
+- name: Copy the ElasticSearch configuration file
+  template: src=elasticsearch.yml.j2 dest=/etc/elasticsearch/elasticsearch.yml owner=root group=elasticsearch mode=0750 force=yes
+  notify: restart elasticsearch
+
+
+- name: Download the Graylog repository package
+  get_url:
+    url: 'https://packages.graylog2.org/repo/packages/graylog-2.2-repository_latest.deb'
+    dest: '/tmp/graylog_repository.deb'
+
+- name: Install the Graylog repository package
+  apt:
+    deb: '/tmp/graylog_repository.deb'
+    state: installed
+    dpkg_options: 'force-all'
+  register: install_repo
+
+- name: Install Graylog
+  apt: name=graylog-server update_cache={{ update_apt_cache }} state=installed
+
+- name: Copy the Graylog configuration file
+  template: src=graylog.server.conf.j2 dest=/etc/graylog/server/server.conf owner=root group=root mode=0644 force=yes
+  notify: restart graylog

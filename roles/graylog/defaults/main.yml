@@ -1,0 +1,9 @@
+---
+
+rest_listen_uri: http://0.0.0.0:9000/api/
+web_listen_uri: http://0.0.0.0:9000/
+web_endpoint_uri: http://127.0.0.1:9000/api/
+
+# You should change these defaults for security reasons.
+graylog_password_secret: Gahfoh1ooqu9toxai8lah2xingooVohgae1aorich7faengaJaegh8yaeNgeeT0eiNgohs9phais6phae8Chahpoogho5aic
+graylog_root_password_sha2: 5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8

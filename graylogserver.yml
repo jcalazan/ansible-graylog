@@ -1,0 +1,16 @@
+---
+
+- name: Provision a Graylog server
+  hosts: all
+  become: yes
+  become_user: root
+  remote_user: root
+  vars:
+    - update_apt_cache: yes
+
+  roles:
+    - base
+    - certbot
+    - graylog
+    - nginx
+    - ufw
